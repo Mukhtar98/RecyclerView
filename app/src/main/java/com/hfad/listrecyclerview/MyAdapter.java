@@ -36,37 +36,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder,final int position) {
         holder.name.setText(list.get(position).getName());
         holder.imageView.setImageResource(list.get(position).getImage());
-        holder.menuPopUp.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(mContext, v);
-            popupMenu.getMenuInflater().inflate(R.menu.pop_menu, popupMenu.getMenu());
-            popupMenu.show();
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId())
-                    {
-                        case R.id.delete:
-                            Toast.makeText(mContext, "Delete clicked", Toast.LENGTH_SHORT).show();
-                            temp = new Model(list.get(position).getName(), list.get(position).getImage());
-                            deleteItem(position);
-                            break;
-                    }
-                    return true;
-                }
-            });
+        holder.itDelete.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Model theRemovedItem = list.get(position);
+                list.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged (position, getItemCount ());
+            }
         });
     }
 
-    private void deleteItem(int position)
-    {
-        list.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, list.size());
 
-    }
 
     @Override
     public int getItemCount() {
@@ -74,12 +57,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView, menuPopUp;
+        ImageView imageView, itDelete;
         TextView name;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
-            menuPopUp = itemView.findViewById(R.id.itemDelete);
+            itDelete = itemView.findViewById(R.id.itemDelete);
             name = itemView.findViewById(R.id.textView);
         }
     }
